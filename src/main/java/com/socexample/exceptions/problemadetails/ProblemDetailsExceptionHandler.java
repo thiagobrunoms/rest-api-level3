@@ -20,7 +20,7 @@ public class ProblemDetailsExceptionHandler {
 		problemDetailsData.put("type", URI.create("https://myapp.com/probs/entity-already-exists"));
 		problemDetailsData.put("title", "A entidade já existe");
 		problemDetailsData.put("detail", ex.getMessage());
-		problemDetailsData.put("instance", URI.create("https://myapp.com/probs/entity-already-exists"));
+		problemDetailsData.put("status", "CONFLICT");
 		
 		HttpHeaders h = new HttpHeaders();
 		h.add("Content-Type", "application/problem+json");
@@ -35,7 +35,7 @@ public class ProblemDetailsExceptionHandler {
 		problemDetailsData.put("type", URI.create("https://myapp.com/probs/entity-not-found"));
 		problemDetailsData.put("title", "A entidade não existe");
 		problemDetailsData.put("detail", ex.getMessage());
-		problemDetailsData.put("instance", URI.create("https://myapp.com/probs/entity-not-found"));
+		problemDetailsData.put("status", "NOT FOUND");
 		
 		HttpHeaders h = new HttpHeaders();
 		h.add("Content-Type", "application/problem+json");

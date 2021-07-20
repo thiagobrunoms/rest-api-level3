@@ -51,8 +51,9 @@ public class UserResource {
 	}
 	
 	
-	@GetMapping("/{code}")
+	@GetMapping("{code}")
 	public ResponseEntity<?> findByCode(@PathVariable String code) {
+		System.out.println("codigo " + code);
 		UserDTO userDTO = userService.findByCode(code);
 		
 		if (userDTO != null) return ResponseEntity.ok(userDTO);

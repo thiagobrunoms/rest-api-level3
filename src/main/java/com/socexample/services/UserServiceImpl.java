@@ -1,6 +1,6 @@
 package com.socexample.services;
 
-import javax.persistence.EntityNotFoundException;
+
 import javax.transaction.Transactional;
 
 
@@ -12,8 +12,6 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpClientErrorException.Conflict;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 import com.socexample.assemblers.CarAssembler;
 import com.socexample.assemblers.UserAssembler;
@@ -22,6 +20,7 @@ import com.socexample.dtos.UserDTO;
 import com.socexample.entities.Car;
 import com.socexample.entities.User;
 import com.socexample.exceptions.EntityAlreadyExistsException;
+import com.socexample.exceptions.EntityNotFoundException;
 import com.socexample.repositories.CarRepository;
 import com.socexample.repositories.UserRepository;
 
@@ -73,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	public UserDTO findByCode(String code) {
 		User user = userRepository.findByCode(code).orElse(null);
 		
-		if (user == null)
+		if (user != null)
 			return userAssembler.toModel(user);
 		
 		return null;
@@ -107,14 +106,14 @@ public class UserServiceImpl implements UserService {
 		System.out.println("Buscando usuario por codigo " + user.getCode());
 		User foundUser = userRepository.findByCode(user.getCode()).orElse(null);
 		
-		System.out.println("found user code " + foundUser.getCode() + " recevied code: " + user.getCode());
-		if (foundUser != null && user.getCode() != foundUser.getCode()) throw new EntityAlreadyExistsException("Entidade com code " + user.getCode() + " já existe!");
-		
 		if (foundUser == null) return null;
+
 		
 		user.setId(foundUser.getId());
 		
-		return insert(user);
+		return userAssembler.toModel(userRepository.save(user));
+		
+//		return insert(user);
 	}
 	
 	
@@ -131,8 +130,7 @@ public class UserServiceImpl implements UserService {
 	public CarDTO findUserCarDetails(String code, String plate) throws EntityNotFoundException {
 		System.out.println("findUserCarDetails fired!");
 		Car car = carRepository.findByPlate(plate).orElse(null);
-		
-		System.out.println("user de carro " + car.getUser());
+	
 		
 		if (car == null) {
 			throw new EntityNotFoundException("Veículo com placa " + plate + " não encontrado!");
